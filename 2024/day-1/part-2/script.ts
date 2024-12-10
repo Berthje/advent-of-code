@@ -15,6 +15,6 @@ for (const line of lines) {
 left.forEach(number => {
     const occurence = right.filter((x) => x == number).length;
     sum += (number * occurence)
-})
+});
 
 console.log(sum);
