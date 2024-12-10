@@ -4,6 +4,7 @@ const lines = await readFile('./test_input.txt');
 
 const left: number[] = [];
 const right: number[] = [];
+let sum = 0;
 
 for (const line of lines) {
   const [l, r] = line.split('   ').map(Number);
@@ -11,4 +12,12 @@ for (const line of lines) {
   right.push(r);
 }
 
-console.log(left, right);
+left.sort((a, b) => a - b);
+right.sort((a, b) => a - b);
+
+left.forEach((number, index) => {
+  console.log(right[index] - number)
+  sum += right[index] - number;
+});
+
+console.log(sum);
