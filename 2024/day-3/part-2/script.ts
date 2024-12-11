@@ -1,19 +1,23 @@
 import { readFile } from "../../utils.ts";
 
-const lines = await readFile("../data/test_input.txt");
+const lines = await readFile("../data/input.txt");
 let answer: number = 0;
-
-//xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))
+let mulEnabled = true;
 
 lines.forEach((line) => {
-  do {
-    const dontFoundStartIndex = line.search(/\bdon't\(\)/);
-    const nextDoFoundStartIndex = line.search(/do\(\)/g) + 4;
-    line = line.replace(
-      line.substring(dontFoundStartIndex, nextDoFoundStartIndex),
-      "",
-    );
-  } while (line.includes("don't"));
+  while (line.includes("don't()") || line.includes("do()")) {
+    const dontIndex = line.indexOf("don't()");
+    const doIndex = line.indexOf("do()");
+
+    if (dontIndex !== -1 && (dontIndex < doIndex || doIndex === -1)) {
+      mulEnabled = false;
+      line = line.slice(0, dontIndex) + line.slice(dontIndex + 7);
+    }
+    else if (doIndex !== -1 && (doIndex < dontIndex || dontIndex === -1)) {
+      mulEnabled = true;
+      line = line.slice(0, doIndex) + line.slice(doIndex + 4);
+    }
+  }
 
   const pattern = /mul\(\s*\d+(\.\d+)?\s*,\s*\d+(\.\d+)?\s*\)/g;
   const foundValidMultiplies: RegExpMatchArray | null = line.match(pattern);
@@ -21,8 +25,10 @@ lines.forEach((line) => {
   if (foundValidMultiplies) {
     const splitPattern = /mul\(\s*(\d+(\.\d+)?)\s*,\s*(\d+(\.\d+)?)\s*\)/;
     foundValidMultiplies.forEach((validMul) => {
-      const test = validMul.match(splitPattern);
-      answer += test[1] * test[3];
+      if (mulEnabled) {
+        const test = validMul.match(splitPattern);
+        answer += parseFloat(test[1]) * parseFloat(test[3]);
+      }
     });
   }
 });
