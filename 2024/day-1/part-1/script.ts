@@ -1,6 +1,6 @@
 import { readFile } from "../../utils.ts";
 
-const lines = await readFile("./input.txt");
+const lines = await readFile("../data/input.txt");
 
 const left: number[] = [];
 const right: number[] = [];
